@@ -2548,12 +2548,13 @@ class Graph:
     new_points_dep = []
 
     # Step 1: check for all deps.
+    # 对 clause 中的每个 construction 都验证它的 dep, 存储在 new_points_dep 中.
     for c in clause.constructions:
       cdef = definitions[c.name]
 
       if len(cdef.construction.args) != len(c.args):
         if len(cdef.construction.args) - len(c.args) == len(clause.points):
-          c.args = clause.points + c.args
+          c.args = clause.points + c.args # add the points to the front. 
         else:
           correct_form = ' '.join(cdef.points + ['=', c.name] + cdef.args)
           raise ValueError('Argument mismatch. ' + correct_form)
