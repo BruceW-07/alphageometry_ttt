@@ -214,6 +214,7 @@ def run_ddar(g: gh.Graph, p: pr.Problem, out_file: str) -> bool:
   Returns:
     Boolean, whether DD+AR finishes successfully.
   """
+  # 为什么 RULES 是 Theorem 类型, 但是 ddar.solve 里的参数类型是 list[Problem]?
   ddar.solve(g, RULES, p, max_level=1000)
 
   goal_args = g.names2nodes(p.goal.args)

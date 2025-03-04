@@ -85,6 +85,7 @@ def solve(
   status = 'saturated'
   level_times = []
 
+  # 这里先对 g 进行了一次 ar
   dervs, eq4 = g.derive_algebra(level=0, verbose=False)
   derives = [dervs]
   eq4s = [eq4]
@@ -92,6 +93,7 @@ def solve(
   all_added = []
 
   while len(level_times) < max_level:
+    # 进行 dd
     dervs, eq4, next_branches, added = saturate_or_goal(
         g, theorems, level_times, controller, max_level, timeout=timeout
     )

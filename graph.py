@@ -177,6 +177,7 @@ class Graph:
 
   def add_algebra(self, dep: Dependency, level: int) -> None:
     """Add new algebraic predicates."""
+    # 向 AR 使用的系数矩阵中添加数据
     _ = level
     if dep.name not in [
         'para',
