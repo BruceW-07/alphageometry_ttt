@@ -502,6 +502,7 @@ class Graph:
         g = Graph()
         added = []
         plevel = 0
+        # 把 problem 中的 clauses 加入证明图中
         for clause in pr.clauses:
           adds, plevel = g.add_clause(
               clause, plevel, definitions, verbose=verbose
@@ -2580,10 +2581,11 @@ class Graph:
       new_points_dep += [deps]
 
     # Step 2: draw.
+    # 对 clause 中的每个 construction, 根据它在 definitions 中的定义, 画出几何对象.
     def range_fn() -> (
         list[Union[nm.Point, nm.Line, nm.Circle, nm.HalfLine, nm.HoleCircle]]
     ):
-      to_be_intersected = []
+      to_be_intersected = []    # 存储几何对象
       for c in clause.constructions:
         cdef = definitions[c.name]
         mapping = dict(zip(cdef.construction.args, c.args))
