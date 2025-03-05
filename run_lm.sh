@@ -69,14 +69,7 @@ python -m alphageometry \
 --alsologtostderr \
 --problems_file=$(pwd)/$PROBLEM_FILE \
 --problem_name=$PROBLEM_NAME \
---mode=ddar \
-# --out_file=output/ddar/$PROBLEM_NAME.txt \
-"${DDAR_ARGS[@]}"
-
-# python -m alphageometry \
-# --alsologtostderr \
-# --problems_file=$(pwd)/imo_ag_30.txt \
-# --problem_name=translated_imo_2000_p1 \
-# --mode=ddar \
-# --out_file=output/ddar/translated_imo_2000_p1.txt \
-# "${DDAR_ARGS[@]}"
+--mode=alphageometry \
+"${DDAR_ARGS[@]}" \
+"${SEARCH_ARGS[@]}" \
+"${LM_ARGS[@]}"

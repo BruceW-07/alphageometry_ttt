@@ -23,7 +23,7 @@ source ./bin/activate
 # pip install --require-hashes -r requirements.txt
 
 # gdown --folder https://bit.ly/alphageometry
-# DATA=ag_ckpt_vocab
+DATA=ag_ckpt_vocab
 
 MELIAD_PATH=meliad_lib/meliad
 # mkdir -p $MELIAD_PATH
@@ -60,10 +60,16 @@ LM_ARGS=(
   --gin_param=Trainer.restore_state_variables=False
 );
 
-# Function to get problem names from file
+# # Function to get problem names from file
+# get_problem_names() {
+#     local file=$1
+#     sed -n '1~2p' "$file"  # Get odd-numbered lines
+# }
+
+# Function to get the first line problem name from file
 get_problem_names() {
     local file=$1
-    sed -n '1~2p' "$file"  # Get odd-numbered lines
+    sed -n '1p' "$file"  # Get the first line
 }
 
 # Create output directories
