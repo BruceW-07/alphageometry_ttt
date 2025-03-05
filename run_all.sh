@@ -61,16 +61,16 @@ LM_ARGS=(
 );
 
 # # Function to get problem names from file
-# get_problem_names() {
-#     local file=$1
-#     sed -n '1~2p' "$file"  # Get odd-numbered lines
-# }
-
-# Function to get the first line problem name from file
 get_problem_names() {
     local file=$1
-    sed -n '1p' "$file"  # Get the first line
+    sed -n '1~2p' "$file"  # Get odd-numbered lines
 }
+
+# Function to get the first line problem name from file
+# get_problem_names() {
+#     local file=$1
+#     sed -n '1p' "$file"  # Get the first line
+# }
 
 # Create output directories
 mkdir -p output/alphageometry/imo
