@@ -24,3 +24,4 @@ share/python-wheels/
 *.egg
 MANIFEST
 pyvenv.cfg
+ag_ckpt_vocab/
