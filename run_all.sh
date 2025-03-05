@@ -15,7 +15,7 @@
 
 # !/bin/bash
 set -e
-set -x
+# set -x
 
 # virtualenv -p python3 .
 source ./bin/activate
@@ -28,7 +28,7 @@ DATA=ag_ckpt_vocab
 MELIAD_PATH=meliad_lib/meliad
 # mkdir -p $MELIAD_PATH
 # git clone https://github.com/google-research/meliad $MELIAD_PATH
-# export PYTHONPATH=$PYTHONPATH:$MELIAD_PATH
+export PYTHONPATH=$PYTHONPATH:$MELIAD_PATH
 
 DDAR_ARGS=(
   --defs_file=$(pwd)/defs.txt \
@@ -61,16 +61,16 @@ LM_ARGS=(
 );
 
 # # Function to get problem names from file
-# get_problem_names() {
-#     local file=$1
-#     sed -n '1~2p' "$file"  # Get odd-numbered lines
-# }
-
-# Function to get the first line problem name from file
 get_problem_names() {
     local file=$1
-    sed -n '1p' "$file"  # Get the first line
+    sed -n '1~2p' "$file"  # Get odd-numbered lines
 }
+
+# Function to get the first line problem name from file
+# get_problem_names() {
+#     local file=$1
+#     sed -n '1p' "$file"  # Get the first line
+# }
 
 # Create output directories
 mkdir -p output/alphageometry/imo
@@ -113,12 +113,20 @@ for mode in "alphageometry" "ddar"; do
 done
 
 # Count results
-echo "Results summary:"
-echo "AlphaGeometry mode:"
-echo "IMO problems: $(ls output/alphageometry/imo | wc -l)"
-echo "JGEX problems: $(ls output/alphageometry/jgex | wc -l)"
-echo "DDAR mode:"
-echo "IMO problems: $(ls output/ddar/imo | wc -l)"
-echo "JGEX problems: $(ls output/ddar/jgex | wc -l)"
+# echo "Results summary:"
+# echo "AlphaGeometry mode:"
+# echo "IMO problems: $(ls output/alphageometry/imo | wc -l)"
+# echo "JGEX problems: $(ls output/alphageometry/jgex | wc -l)"
+# echo "DDAR mode:"
+# echo "IMO problems: $(ls output/ddar/imo | wc -l)"
+# echo "JGEX problems: $(ls output/ddar/jgex | wc -l)"
 
+echo "Results summary:"
+echo "---------------------------------"
+echo "|           | IMO problems | JGEX problems |"
+echo "---------------------------------"
+echo "| AlphaGeometry | $(ls output/alphageometry/imo | wc -l)          | $(ls output/alphageometry/jgex | wc -l)           |"
+echo "---------------------------------"
+echo "| DDAR         | $(ls output/ddar/imo | wc -l)          | $(ls output/ddar/jgex | wc -l)           |"
+echo "---------------------------------"
 
