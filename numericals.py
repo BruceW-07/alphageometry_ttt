@@ -27,7 +27,9 @@ import numpy as np
 from numpy.random import uniform as unif  # pylint: disable=g-importing-member
 
 
-matplotlib.use('TkAgg')
+# matplotlib.use('TkAgg')
+# 根据 issue 中提到的方法修改 https://github.com/google-deepmind/alphageometry/issues/48
+matplotlib.use('Agg')
 
 
 ATOM = 1e-12
