@@ -97,12 +97,15 @@ for mode in "alphageometry" "ddar"; do
     
     # Process JGEX problems
     while read -r problem; do
+        problem_sanitized=$(echo "${problem}" | tr '/' '_')  # 将 / 替换为 _
+        out_file="output/${mode}/jgex/${problem_sanitized}.txt"
+
         python -m alphageometry \
         --alsologtostderr \
         --problems_file=$(pwd)/jgex_ag_231.txt \
         --problem_name="$problem" \
         --mode=$mode \
-        --out_file="output/${mode}/jgex/${problem}.txt" \
+        --out_file=${out_file} \
         "${DDAR_ARGS[@]}" \
         "${SEARCH_ARGS[@]}" \
         "${LM_ARGS[@]}"
