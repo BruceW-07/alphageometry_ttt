@@ -28,6 +28,6 @@
 import tensorflow as tf
 
 print(tf.sysconfig.get_build_info())
-# print("TensorFlow version: ", tf.__version__)
-# print("GPU built with TensorFlow: ", tf.test.is_built_with_cuda())
-# print("Can access GPU: ", tf.config.list_physical_devices('GPU'))
+print("TensorFlow version: ", tf.__version__)
+print("GPU built with TensorFlow: ", tf.test.is_built_with_cuda())
+print("Can access GPU: ", tf.config.list_physical_devices('GPU'))
