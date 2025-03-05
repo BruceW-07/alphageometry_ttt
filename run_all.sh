@@ -82,19 +82,6 @@ mkdir -p output/ddar/jgex
 for mode in "alphageometry" "ddar"; do
     echo "Processing mode: $mode"
     
-    # Process IMO problems
-    while read -r problem; do
-        python -m alphageometry \
-        --alsologtostderr \
-        --problems_file=$(pwd)/imo_ag_30.txt \
-        --problem_name="$problem" \
-        --mode=$mode \
-        --out_file="output/${mode}/imo/${problem}.txt" \
-        "${DDAR_ARGS[@]}" \
-        "${SEARCH_ARGS[@]}" \
-        "${LM_ARGS[@]}"
-    done < <(get_problem_names "imo_ag_30.txt")
-    
     # Process JGEX problems
     while read -r problem; do
         problem_sanitized=$(echo "${problem}" | tr '/' '_')  # 将 / 替换为 _
@@ -110,6 +97,19 @@ for mode in "alphageometry" "ddar"; do
         "${SEARCH_ARGS[@]}" \
         "${LM_ARGS[@]}"
     done < <(get_problem_names "jgex_ag_231.txt")
+    
+    # Process IMO problems
+    while read -r problem; do
+        python -m alphageometry \
+        --alsologtostderr \
+        --problems_file=$(pwd)/imo_ag_30.txt \
+        --problem_name="$problem" \
+        --mode=$mode \
+        --out_file="output/${mode}/imo/${problem}.txt" \
+        "${DDAR_ARGS[@]}" \
+        "${SEARCH_ARGS[@]}" \
+        "${LM_ARGS[@]}"
+    done < <(get_problem_names "imo_ag_30.txt")
 done
 
 # Count results
