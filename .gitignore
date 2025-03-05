@@ -26,3 +26,5 @@ MANIFEST
 pyvenv.cfg
 ag_ckpt_vocab/
 output/
+CACHEDIR.TAG
+share/
