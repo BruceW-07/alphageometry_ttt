@@ -35,9 +35,9 @@ DDAR_ARGS=(
   --rules_file=$(pwd)/rules.txt \
 );
 
-BATCH_SIZE=2
-BEAM_SIZE=2
-DEPTH=2
+BATCH_SIZE=32
+BEAM_SIZE=512
+DEPTH=16
 
 SEARCH_ARGS=(
   --beam_size=$BEAM_SIZE
@@ -60,13 +60,56 @@ LM_ARGS=(
   --gin_param=Trainer.restore_state_variables=False
 );
 
-echo $PYTHONPATH
+# Function to get problem names from file
+get_problem_names() {
+    local file=$1
+    sed -n '1~2p' "$file"  # Get odd-numbered lines
+}
 
-python -m alphageometry \
---alsologtostderr \
---problems_file=$(pwd)/examples.txt \
---problem_name=orthocenter \
---mode=alphageometry \
-"${DDAR_ARGS[@]}" \
-"${SEARCH_ARGS[@]}" \
-"${LM_ARGS[@]}"
+# Create output directories
+mkdir -p output/alphageometry/imo
+mkdir -p output/alphageometry/jgex
+mkdir -p output/ddar/imo
+mkdir -p output/ddar/jgex
+
+# Process IMO problems
+for mode in "alphageometry" "ddar"; do
+    echo "Processing mode: $mode"
+    
+    # Process IMO problems
+    while read -r problem; do
+        python -m alphageometry \
+        --alsologtostderr \
+        --problems_file=$(pwd)/imo_ag_30.txt \
+        --problem_name="$problem" \
+        --mode=$mode \
+        --out_file="output/${mode}/imo/${problem}.txt" \
+        "${DDAR_ARGS[@]}" \
+        "${SEARCH_ARGS[@]}" \
+        "${LM_ARGS[@]}"
+    done < <(get_problem_names "imo_ag_30.txt")
+    
+    # Process JGEX problems
+    while read -r problem; do
+        python -m alphageometry \
+        --alsologtostderr \
+        --problems_file=$(pwd)/jgex_ag_231.txt \
+        --problem_name="$problem" \
+        --mode=$mode \
+        --out_file="output/${mode}/jgex/${problem}.txt" \
+        "${DDAR_ARGS[@]}" \
+        "${SEARCH_ARGS[@]}" \
+        "${LM_ARGS[@]}"
+    done < <(get_problem_names "jgex_ag_231.txt")
+done
+
+# Count results
+echo "Results summary:"
+echo "AlphaGeometry mode:"
+echo "IMO problems: $(ls output/alphageometry/imo | wc -l)"
+echo "JGEX problems: $(ls output/alphageometry/jgex | wc -l)"
+echo "DDAR mode:"
+echo "IMO problems: $(ls output/ddar/imo | wc -l)"
+echo "JGEX problems: $(ls output/ddar/jgex | wc -l)"
+
+
