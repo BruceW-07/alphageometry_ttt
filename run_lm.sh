@@ -35,9 +35,9 @@ DDAR_ARGS=(
   --rules_file=$(pwd)/rules.txt \
 );
 
-BATCH_SIZE=2
-BEAM_SIZE=2
-DEPTH=2
+BATCH_SIZE=32
+BEAM_SIZE=512
+DEPTH=16
 
 SEARCH_ARGS=(
   --beam_size=$BEAM_SIZE
@@ -62,8 +62,8 @@ LM_ARGS=(
 
 echo $PYTHONPATH
 
-PROBLEM_FILE="jgex_ag_231.txt"
-PROBLEM_NAME="examples/complete2/012/complete_004_6_GDD_FULL_81-109_101.gex"
+PROBLEM_FILE="imo_ag_30.txt"
+PROBLEM_NAME="translated_imo_2004_p1"
 
 python -m alphageometry \
 --alsologtostderr \
