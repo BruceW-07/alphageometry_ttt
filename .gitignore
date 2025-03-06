@@ -29,3 +29,4 @@ output/
 CACHEDIR.TAG
 share/
 meliad_lib/
+error_log.txt
