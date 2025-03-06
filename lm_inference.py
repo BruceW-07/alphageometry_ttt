@@ -21,18 +21,18 @@ import models  # pylint: disable=unused-import
 import t5.data
 from transformer import inference_utils
 
-# 禁用JAX的内存预分配,使用按需分配策略
-# 这样可以减少内存占用,但可能略微影响性能
-import os
-os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
+# # 禁用JAX的内存预分配,使用按需分配策略
+# # 这样可以减少内存占用,但可能略微影响性能
+# import os
+# os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 
-# 检测可用设备
-devices = jax.devices()
-using_gpu = any(d.platform == 'gpu' for d in devices)
-if using_gpu:
-    print("Using GPU for inference")
-else:
-    print("Using CPU for inference")
+# # 检测可用设备
+# devices = jax.devices()
+# using_gpu = any(d.platform == 'gpu' for d in devices)
+# if using_gpu:
+#     print("Using GPU for inference")
+# else:
+#     print("Using CPU for inference")
 
 np = jax.numpy
 
@@ -66,7 +66,8 @@ class LanguageModelInference:
         process_summaries_function=process_summaries_f,
         load_dir=load_dir,
         workdir='',  # Don't log or save checkpoints.
-        replicate_mode=True,  # 启用设备复制模式
+        # replicate_mode=True,  # 启用设备复制模式
+        replicate_mode=False,
     )  # Run on a single device at batch size 1.
     self.trainer = trainer
 
