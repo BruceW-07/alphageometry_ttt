@@ -14,7 +14,9 @@
 # ==============================================================================
 
 # !/bin/bash
-set -e
+set +e
+ERROR_LOG="error_log.txt"
+echo "Error Log - $(date)" > "$ERROR_LOG"
 # set -x
 
 # virtualenv -p python3 .
@@ -87,39 +89,36 @@ for mode in "alphageometry" "ddar"; do
         problem_sanitized=$(echo "${problem}" | tr '/' '_')  # 将 / 替换为 _
         out_file="output/${mode}/jgex/${problem_sanitized}.txt"
 
-        python -m alphageometry \
-        --alsologtostderr \
-        --problems_file=$(pwd)/jgex_ag_231.txt \
-        --problem_name="$problem" \
-        --mode=$mode \
-        --out_file=${out_file} \
-        "${DDAR_ARGS[@]}" \
-        "${SEARCH_ARGS[@]}" \
-        "${LM_ARGS[@]}"
+        echo "Processing JGEX problem: $problem"
+        if ! python -m alphageometry \
+            --alsologtostderr \
+            --problems_file=$(pwd)/jgex_ag_231.txt \
+            --problem_name="$problem" \
+            --mode=$mode \
+            --out_file=${out_file} \
+            "${DDAR_ARGS[@]}" \
+            "${SEARCH_ARGS[@]}" \
+            "${LM_ARGS[@]}"; then
+            echo "[$(date)] Error processing JGEX problem: $problem in $mode mode" >> "$ERROR_LOG"
+        fi
     done < <(get_problem_names "jgex_ag_231.txt")
     
     # Process IMO problems
     while read -r problem; do
-        python -m alphageometry \
-        --alsologtostderr \
-        --problems_file=$(pwd)/imo_ag_30.txt \
-        --problem_name="$problem" \
-        --mode=$mode \
-        --out_file="output/${mode}/imo/${problem}.txt" \
-        "${DDAR_ARGS[@]}" \
-        "${SEARCH_ARGS[@]}" \
-        "${LM_ARGS[@]}"
+        echo "Processing IMO problem: $problem"
+        if ! python -m alphageometry \
+            --alsologtostderr \
+            --problems_file=$(pwd)/imo_ag_30.txt \
+            --problem_name="$problem" \
+            --mode=$mode \
+            --out_file="output/${mode}/imo/${problem}.txt" \
+            "${DDAR_ARGS[@]}" \
+            "${SEARCH_ARGS[@]}" \
+            "${LM_ARGS[@]}"; then
+            echo "[$(date)] Error processing IMO problem: $problem in $mode mode" >> "$ERROR_LOG"
+        fi
     done < <(get_problem_names "imo_ag_30.txt")
 done
-
-# Count results
-# echo "Results summary:"
-# echo "AlphaGeometry mode:"
-# echo "IMO problems: $(ls output/alphageometry/imo | wc -l)"
-# echo "JGEX problems: $(ls output/alphageometry/jgex | wc -l)"
-# echo "DDAR mode:"
-# echo "IMO problems: $(ls output/ddar/imo | wc -l)"
-# echo "JGEX problems: $(ls output/ddar/jgex | wc -l)"
 
 echo "Results summary:"
 echo "---------------------------------"
@@ -129,4 +128,10 @@ echo "| AlphaGeometry | $(ls output/alphageometry/imo | wc -l)          | $(ls o
 echo "---------------------------------"
 echo "| DDAR         | $(ls output/ddar/imo | wc -l)          | $(ls output/ddar/jgex | wc -l)           |"
 echo "---------------------------------"
+
+echo ""
+echo "Error Summary:"
+echo "-------------"
+echo "Total errors: $(grep -c "Error processing" "$ERROR_LOG")"
+echo "Check $ERROR_LOG for detailed error information"
 
