@@ -89,6 +89,12 @@ for mode in "alphageometry" "ddar"; do
         problem_sanitized=$(echo "${problem}" | tr '/' '_')  # 将 / 替换为 _
         out_file="output/${mode}/jgex/${problem_sanitized}.txt"
 
+        # 检查输出文件是否已存在
+        if [ -f "${out_file}" ]; then
+            echo "Skipping JGEX problem ${problem} (output file already exists)"
+            continue
+        fi
+
         echo "Processing JGEX problem: $problem"
         if ! python -m alphageometry \
             --alsologtostderr \
@@ -105,6 +111,14 @@ for mode in "alphageometry" "ddar"; do
     
     # Process IMO problems
     while read -r problem; do
+        out_file="output/${mode}/imo/${problem}.txt"
+
+        # 检查输出文件是否已存在
+        if [ -f "${out_file}" ]; then
+            echo "Skipping IMO problem ${problem} (output file already exists)"
+            continue
+        fi
+
         echo "Processing IMO problem: $problem"
         if ! python -m alphageometry \
             --alsologtostderr \
