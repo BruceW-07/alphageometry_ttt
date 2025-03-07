@@ -63,13 +63,14 @@ LM_ARGS=(
 echo $PYTHONPATH
 
 PROBLEM_FILE="imo_ag_30.txt"
-PROBLEM_NAME="translated_imo_2004_p1"
+PROBLEM_NAME="translated_imo_2012_p5"
 
 python -m alphageometry \
 --alsologtostderr \
 --problems_file=$(pwd)/$PROBLEM_FILE \
 --problem_name=$PROBLEM_NAME \
 --mode=alphageometry \
+--out_file=${PROBLEM_FILE}.txt
 "${DDAR_ARGS[@]}" \
 "${SEARCH_ARGS[@]}" \
 "${LM_ARGS[@]}"
