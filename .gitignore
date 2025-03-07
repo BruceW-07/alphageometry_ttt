@@ -29,4 +29,5 @@ output/
 CACHEDIR.TAG
 share/
 meliad_lib/
+time_log.txt
 error_log.txt

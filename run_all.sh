@@ -106,8 +106,8 @@ mkdir -p output/alphageometry/jgex
 mkdir -p output/ddar/imo
 mkdir -p output/ddar/jgex
 
-# Process IMO problems
-for mode in "alphageometry" "ddar"; do
+# for mode in "alphageometry" "ddar"; do
+for mode in "alphageometry"; do
     echo "Processing mode: $mode"
     
     # Process IMO problems
@@ -135,29 +135,29 @@ for mode in "alphageometry" "ddar"; do
     done < <(get_problem_names "imo_ag_30.txt")
     
     # Process JGEX problems
-    while read -r problem; do
-        problem_sanitized=$(echo "${problem}" | tr '/' '_')  # 将 / 替换为 _
-        out_file="output/${mode}/jgex/${problem_sanitized}.txt"
+    # while read -r problem; do
+    #     problem_sanitized=$(echo "${problem}" | tr '/' '_')  # 将 / 替换为 _
+    #     out_file="output/${mode}/jgex/${problem_sanitized}.txt"
 
-        # 检查输出文件是否已存在
-        if [ -f "${out_file}" ]; then
-            echo "Skipping JGEX problem ${problem} (output file already exists)"
-            continue
-        fi
+    #     # 检查输出文件是否已存在
+    #     if [ -f "${out_file}" ]; then
+    #         echo "Skipping JGEX problem ${problem} (output file already exists)"
+    #         continue
+    #     fi
 
-        echo "Processing JGEX problem: $problem"
-        if ! run_with_timeout "$problem" "$mode" "$out_file" python -m alphageometry \
-            --alsologtostderr \
-            --problems_file=$(pwd)/jgex_ag_231.txt \
-            --problem_name="$problem" \
-            --mode=$mode \
-            --out_file=${out_file} \
-            "${DDAR_ARGS[@]}" \
-            "${SEARCH_ARGS[@]}" \
-            "${LM_ARGS[@]}"; then
-            echo "[$(date)] Error processing JGEX problem: $problem in $mode mode" >> "$ERROR_LOG"
-        fi
-    done < <(get_problem_names "jgex_ag_231.txt")
+    #     echo "Processing JGEX problem: $problem"
+    #     if ! run_with_timeout "$problem" "$mode" "$out_file" python -m alphageometry \
+    #         --alsologtostderr \
+    #         --problems_file=$(pwd)/jgex_ag_231.txt \
+    #         --problem_name="$problem" \
+    #         --mode=$mode \
+    #         --out_file=${out_file} \
+    #         "${DDAR_ARGS[@]}" \
+    #         "${SEARCH_ARGS[@]}" \
+    #         "${LM_ARGS[@]}"; then
+    #         echo "[$(date)] Error processing JGEX problem: $problem in $mode mode" >> "$ERROR_LOG"
+    #     fi
+    # done < <(get_problem_names "jgex_ag_231.txt")
 done
 
 echo "Results summary:"
