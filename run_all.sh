@@ -84,6 +84,30 @@ mkdir -p output/ddar/jgex
 for mode in "alphageometry" "ddar"; do
     echo "Processing mode: $mode"
     
+    # Process IMO problems
+    while read -r problem; do
+        out_file="output/${mode}/imo/${problem}.txt"
+
+        # 检查输出文件是否已存在
+        if [ -f "${out_file}" ]; then
+            echo "Skipping IMO problem ${problem} (output file already exists)"
+            continue
+        fi
+
+        echo "Processing IMO problem: $problem"
+        if ! python -m alphageometry \
+            --alsologtostderr \
+            --problems_file=$(pwd)/imo_ag_30.txt \
+            --problem_name="$problem" \
+            --mode=$mode \
+            --out_file="output/${mode}/imo/${problem}.txt" \
+            "${DDAR_ARGS[@]}" \
+            "${SEARCH_ARGS[@]}" \
+            "${LM_ARGS[@]}"; then
+            echo "[$(date)] Error processing IMO problem: $problem in $mode mode" >> "$ERROR_LOG"
+        fi
+    done < <(get_problem_names "imo_ag_30.txt")
+    
     # Process JGEX problems
     while read -r problem; do
         problem_sanitized=$(echo "${problem}" | tr '/' '_')  # 将 / 替换为 _
@@ -108,30 +132,6 @@ for mode in "alphageometry" "ddar"; do
             echo "[$(date)] Error processing JGEX problem: $problem in $mode mode" >> "$ERROR_LOG"
         fi
     done < <(get_problem_names "jgex_ag_231.txt")
-    
-    # Process IMO problems
-    while read -r problem; do
-        out_file="output/${mode}/imo/${problem}.txt"
-
-        # 检查输出文件是否已存在
-        if [ -f "${out_file}" ]; then
-            echo "Skipping IMO problem ${problem} (output file already exists)"
-            continue
-        fi
-
-        echo "Processing IMO problem: $problem"
-        if ! python -m alphageometry \
-            --alsologtostderr \
-            --problems_file=$(pwd)/imo_ag_30.txt \
-            --problem_name="$problem" \
-            --mode=$mode \
-            --out_file="output/${mode}/imo/${problem}.txt" \
-            "${DDAR_ARGS[@]}" \
-            "${SEARCH_ARGS[@]}" \
-            "${LM_ARGS[@]}"; then
-            echo "[$(date)] Error processing IMO problem: $problem in $mode mode" >> "$ERROR_LOG"
-        fi
-    done < <(get_problem_names "imo_ag_30.txt")
 done
 
 echo "Results summary:"
