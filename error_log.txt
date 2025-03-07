@@ -1,1 +1,5 @@
 Error Log - Fri Mar  7 16:10:16 CST 2025
+[Fri Mar  7 18:10:18 CST 2025] Error processing IMO problem: translated_imo_2010_p2 in alphageometry mode
+[Fri Mar  7 18:13:23 CST 2025] Error processing IMO problem: translated_imo_2012_p5 in alphageometry mode
+[Fri Mar  7 20:15:27 CST 2025] Error processing IMO problem: translated_imo_2018_p1 in alphageometry mode
+[Fri Mar  7 20:18:22 CST 2025] Error processing IMO problem: translated_imo_2020_p1 in alphageometry mode
