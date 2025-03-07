@@ -17,6 +17,32 @@
 set +e
 ERROR_LOG="error_log.txt"
 echo "Error Log - $(date)" > "$ERROR_LOG"
+TIME_LOG="time_log.txt"
+echo "Time Log - $(date)" > "$TIME_LOG"
+TIMEOUT=7200  # 2 hours in seconds
+
+# Function to run command with timeout and time tracking
+run_with_timeout() {
+    local start_time=$(date +%s)
+    local problem=$1
+    local mode=$2
+    local out_file=$3
+    shift 3
+
+    if timeout $TIMEOUT "$@"; then
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
+        echo "[$(date)] $mode - $problem: Completed in $duration seconds" >> "$TIME_LOG"
+        return 0
+    else
+        local exit_code=$?
+        if [ $exit_code -eq 124 ]; then  # timeout exit code
+            echo "[$(date)] $mode - $problem: Timed out after $TIMEOUT seconds" >> "$TIME_LOG"
+        fi
+        return $exit_code
+    fi
+}
+
 # set -x
 
 # virtualenv -p python3 .
@@ -95,12 +121,12 @@ for mode in "alphageometry" "ddar"; do
         fi
 
         echo "Processing IMO problem: $problem"
-        if ! python -m alphageometry \
+        if ! run_with_timeout "$problem" "$mode" "$out_file" python -m alphageometry \
             --alsologtostderr \
             --problems_file=$(pwd)/imo_ag_30.txt \
             --problem_name="$problem" \
             --mode=$mode \
-            --out_file="output/${mode}/imo/${problem}.txt" \
+            --out_file="$out_file" \
             "${DDAR_ARGS[@]}" \
             "${SEARCH_ARGS[@]}" \
             "${LM_ARGS[@]}"; then
@@ -120,7 +146,7 @@ for mode in "alphageometry" "ddar"; do
         fi
 
         echo "Processing JGEX problem: $problem"
-        if ! python -m alphageometry \
+        if ! run_with_timeout "$problem" "$mode" "$out_file" python -m alphageometry \
             --alsologtostderr \
             --problems_file=$(pwd)/jgex_ag_231.txt \
             --problem_name="$problem" \
@@ -142,6 +168,12 @@ echo "| AlphaGeometry | $(ls output/alphageometry/imo | wc -l)          | $(ls o
 echo "---------------------------------"
 echo "| DDAR         | $(ls output/ddar/imo | wc -l)          | $(ls output/ddar/jgex | wc -l)           |"
 echo "---------------------------------"
+
+echo ""
+echo "Time Summary:"
+echo "------------"
+echo "Check $TIME_LOG for detailed timing information"
+echo "Timed out problems: $(grep -c "Timed out" "$TIME_LOG")"
 
 echo ""
 echo "Error Summary:"
