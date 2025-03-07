@@ -142,9 +142,15 @@ def get_proof_steps(
     dict[tuple[str, ...], int],
 ]:
   """Extract proof steps from the built DAG."""
-  goal_args = g.names2nodes(goal.args)
-  query = Dependency(goal.name, goal_args, None, None)
+  goal_args = g.names2nodes(goal.args)  # 将 goal 的 args 从字符转换为 graph 中的 nodes
+  # Dependency 是 Consturction 的一个子类. 
+  # 比 Construction 多了 rule_name, level, why, _stat, trace 等属性.
+  query = Dependency(goal.name, goal_args, None, None) # 构造一个 Dependency 对象. 
 
+  # setup: 题目中给的命题
+  # aux: 新构造的命题
+  # log: 证明的过程, [(ps, [q])] 表示 ps -> q
+  # setup_points: setup 中的点
   setup, aux, log, setup_points = trace_back.get_logs(
       query, g, merge_trivials=merge_trivials
   )

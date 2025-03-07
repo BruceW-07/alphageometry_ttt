@@ -100,19 +100,24 @@ def separate_dependency_difference(
   setup = []
   log_, log = log, []
   for prems, cons in log_:
+    # 若没有 prems, 则把 cons 加入 setup
     if not prems:
       setup.extend(cons)
       continue
     cons_ = []
     for con in cons:
+      # 如果 rule_name 是 'c0', 则表示它是题目中的条件, 加入 setup
       if con.rule_name == 'c0':
         setup.append(con)
+      # 否则加入 cons_
       else:
         cons_.append(con)
     if not cons_:
       continue
 
+    # 如果 cons_ 里有 'ind', 则把 'ind' 从 prems 中去掉
     prems = [p for p in prems if p.name != 'ind']
+    # 把去掉了 'ind' 的 prems 和去掉了 setup 的 cons_ 加入 log
     log.append((prems, cons_))
 
   points = set(query.args)
@@ -123,6 +128,7 @@ def separate_dependency_difference(
     i += 1
     if not isinstance(q, gm.Point):
       continue
+    # 把 query.args 中 Point 类型的 args 的 rely_on 加入 points 和 queue
     for p in q.rely_on:
       if p not in points:
         points.add(p)
@@ -130,13 +136,17 @@ def separate_dependency_difference(
 
   setup_, setup, aux_setup, aux_points = setup, [], [], set()
   for con in setup_:
+    # 不处理 name == 'ind' 的命题
     if con.name == 'ind':
       continue
+    # 如果 con 的 args 里有不在 points 里的点, 则把 cons 加入 aux_setup,
+    # 把不在 points 里的点加入 aux_points
     elif any([p not in points for p in con.args if isinstance(p, gm.Point)]):
       aux_setup.append(con)
       aux_points.update(
           [p for p in con.args if isinstance(p, gm.Point) and p not in points]
       )
+    # 否则加入 setup
     else:
       setup.append(con)
 
@@ -152,6 +162,7 @@ def recursive_traceback(
   stack = []
 
   def read(q: problem.Dependency) -> None:
+    # 在回溯过程中, 可能会多次遇到自己 (导致多余的推导), 因此需要把这些多余的部分去掉.
     q = q.remove_loop()
     hashed = q.hashed()
     if hashed in visited:
@@ -160,14 +171,16 @@ def recursive_traceback(
     if hashed[0] in ['ncoll', 'npara', 'nperp', 'diff', 'sameside']:
       return
 
+    # nonlocal 表示这里的 stack 是在外部定义的 stack
     nonlocal stack
 
     stack.append(hashed)
     prems = []
 
+    # 如果 q 的 rule_name 不是 CONSTRUCTION_RULE, 则说明 q 是一个推导, 需要递归处理 q 的 why
     if q.rule_name != problem.CONSTRUCTION_RULE:
-      all_deps = []
-      dep_names = set()
+      all_deps = [] # 去重后的 q.why
+      dep_names = set() # 用于去重
       for d in q.why:
         if d.hashed() in dep_names:
           continue
@@ -176,15 +189,19 @@ def recursive_traceback(
 
       for d in all_deps:
         h = d.hashed()
+        # 如果 d 没有被访问过, 则递归处理 d
         if h not in visited:
           read(d)
+        # 如果 d 被访问过, 则加入 prems (premises) 中
         if h in visited:
           prems.append(d)
 
+    # 把 q 的哈希值加入 visited
     visited.add(hashed)
     hashs = sorted([d.hashed() for d in prems])
     found = False
     for ps, qs in log:
+      # 如果在 log 里已经出现过这组 prems, 则把 q 加入 qs (conclusion) 中
       if sorted([d.hashed() for d in ps]) == hashs:
         qs += [q]
         found = True
@@ -279,7 +296,9 @@ def get_logs(
     set[gm.Point],
 ]:
   """Given a DAG and conclusion N, return the premise, aux, proof."""
+  # 返回一列 deps
   query = query.why_me_or_cache(g, query.level)
+  # 返回一列 (ps, [q]), ps 为 premises, q 为 conclusion
   log = recursive_traceback(query)
   log, setup, aux_setup, setup_points, _ = separate_dependency_difference(
       query, log

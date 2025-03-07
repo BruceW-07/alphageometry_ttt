@@ -2563,6 +2563,8 @@ class Graph:
 
       mapping = dict(zip(cdef.construction.args, c.args))
       c_name = 'midp' if c.name == 'midpoint' else c.name
+      # rule_name=problem.CONSTRUCTION_RULE 表示这个 construction 是基本的, 
+      # 不依赖于其他 construction.
       deps = EmptyDependency(level=0, rule_name=problem.CONSTRUCTION_RULE)
       deps.construction = Dependency(c_name, c.args, rule_name=None, level=0)
 

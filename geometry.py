@@ -210,20 +210,26 @@ class Node:
 
     while i < len(queue):
       current = queue[i]
+      # 多找到一个
       if current in others:
         found += 1
+      # 全部找到了
       if found == len(others):
         break
 
       i += 1
 
+      # 从合并历史里找 (如果两个节点是等价的, 则应该能在合并历史中找到彼此)
       for neighbor in current.merge_graph:
+        # 如果当前节点和邻居节点的合并级别大于等于 level，就忽略这个 neighbor
+        # 防止循环论证
         if (
             level is not None
             and current.merge_graph[neighbor].level is not None
             and current.merge_graph[neighbor].level >= level
         ):
           continue
+        # bfs 标准流程. 如果 neighbor 没有被访问过, 就加入队列, 并记录 parent
         if neighbor not in parent:
           queue.append(neighbor)
           parent[neighbor] = current
@@ -320,6 +326,7 @@ def bfs_backtrack(
       deps.append(node.merge_graph[parent[node]])
       node = parent[node]
 
+  # 返回它们属于同一个等价类的原因 (deps)
   return deps
 
 
@@ -410,6 +417,7 @@ def why_equal(x: Node, y: Node, level: int = None) -> list[Any]:
     return None
   if x._val == y._val:
     return []
+  # 两个几何对象为何相等 等价于 它们的值为何相等
   return x._val.why_equal([y._val], level)
 
 

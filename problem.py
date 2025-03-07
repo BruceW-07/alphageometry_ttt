@@ -708,6 +708,7 @@ class Dependency(Construction):
     return dep
 
   def why_me_or_cache(self, g: Any, level: int) -> Dependency:
+    # 若 self 的哈希值在缓存中，则返回缓存中的值, 防止重复计算.
     if self.hashed() in g.cache:
       return g.cache[self.hashed()]
     self.why_me(g, level)
@@ -724,25 +725,34 @@ class Dependency(Construction):
     name, args = self.name, self.args
 
     hashed_me = hashed(name, args)
+    # 若 self 的哈希值在缓存中，则返回缓存中的值, 防止重复计算.
     if hashed_me in g.cache:
       dep = g.cache[hashed_me]
       self.why = dep.why
       self.rule_name = dep.rule_name
       return
 
+    # 对每种 predicate 分别处理
+    # 平行 (ab // cd)
     if self.name == 'para':
       a, b, c, d = self.args
+      # 如果两条线相同, 则直接返回
       if {a, b} == {c, d}:
         self.why = []
         return
 
+      # 获取两条直线在 g 中的表示
       ab = g._get_line(a, b)
       cd = g._get_line(c, d)
+      # 若 ab 和 cd 是同一条线
       if ab == cd:
+        # 若 {a, b} = {c, d}, 则显然
         if {a, b} == {c, d}:
           self.why = []
           self.rule_name = ''
           return
+        # 若 {a, b} != {c, d}, 则说明 a, b, c, d 共线
+        # 再递归寻找 a, b, c, d 共线的原因
         dep = Dependency('coll', list({a, b, c, d}), 't??', None)
         self.why = [dep.why_me_or_cache(g, level)]
         return
@@ -754,9 +764,11 @@ class Dependency(Construction):
         d = Dependency('collx', [x, y, x_, y_], None, level)
         self.why += [d.why_me_or_cache(g, level)]
 
+      # ab 和 cd 都是 Line, 其属性为 Direction. Direction 相等等价于平行
       whypara = g.why_equal(ab, cd, None)
       self.why += whypara
 
+    # 中点
     elif self.name == 'midp':
       m, a, b = self.args
       ma = g._get_segment(m, a)
@@ -1070,6 +1082,7 @@ def hashed(
 
 def hashed_txt(name: str, args: list[str]) -> tuple[str, ...]:
   """Return a tuple unique to name and args upto arg permutation equivariant."""
+  # 为相同的几何关系生成相同的哈希值.
 
   if name in ['const', 'aconst', 'rconst']:
     a, b, c, d, y = args
