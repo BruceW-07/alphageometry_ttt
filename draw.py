@@ -28,4 +28,4 @@ for key in problems:
       g.type2nodes[gh.Circle],
       g.type2nodes[gh.Segment],
       #block=True,
-      save_to="./output/plot/"+key+".jpg")
+      save_to="./output/plot/"+problem_file+"/"+key+".jpg")
