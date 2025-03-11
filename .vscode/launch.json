@@ -11,8 +11,13 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "args": [
-        "${command:pickArgs}",
-        "alsologtostderr",
+        "--${command:pickArgs}",
+        "--alsologtostderr",
+        "--problems_file=${workspaceFolder}/imo_ag_30.txt",
+        "--problem_name=translated_imo_2002_p2a",
+        "--mode=ddar",
+        "--defs_file=${workspaceFolder}/defs.txt",
+        "--rules_file=${workspaceFolder}/rules.txt"
       ]
     }
   ]
