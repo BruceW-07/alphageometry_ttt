@@ -23,9 +23,9 @@ for key in problems:
     g, _ = gh.Graph.build_problem(p, defs)
     goal_args = g.names2nodes(p.goal.args)
     gh.nm.draw(
-      g.type2nodes[gh.Point],
-      g.type2nodes[gh.Line],
-      g.type2nodes[gh.Circle],
-      g.type2nodes[gh.Segment],
-      #block=True,
-      save_to="./output/plot/"+problem_file+"/"+key+".jpg")
+        g.type2nodes[gh.Point],
+        g.type2nodes[gh.Line],
+        g.type2nodes[gh.Circle],
+        g.type2nodes[gh.Segment],
+        #block=True,
+        save_to="./output/plot/"+problem_file+"/"+key+".jpg")
