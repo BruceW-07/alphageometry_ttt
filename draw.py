@@ -8,8 +8,8 @@ import dd
 import graph as gh
 import problem as pr
 
-# problem_file = "imo_ag_30.txt"
-problem_file = "jgex_ag_231.txt"
+problem_file = "imo_ag_30.txt"
+# problem_file = "jgex_ag_231.txt"
 problems = pr.Problem.from_txt_file(
     problem_file, 
     to_dict=True, 
@@ -23,9 +23,9 @@ for key in problems:
     g, _ = gh.Graph.build_problem(p, defs)
     goal_args = g.names2nodes(p.goal.args)
     gh.nm.draw(
-      g.type2nodes[gh.Point],
-      g.type2nodes[gh.Line],
-      g.type2nodes[gh.Circle],
-      g.type2nodes[gh.Segment],
-      #block=True,
-      save_to="./output/plot/"+key+".jpg")
+        g.type2nodes[gh.Point],
+        g.type2nodes[gh.Line],
+        g.type2nodes[gh.Circle],
+        g.type2nodes[gh.Segment],
+        #block=True,
+        save_to="./output/plot/"+problem_file+"/"+key+".jpg")
