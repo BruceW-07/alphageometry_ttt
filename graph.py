@@ -2541,6 +2541,7 @@ class Graph:
       plevel: int,
       definitions: dict[str, problem.Definition],
       verbose: int = False,
+      breakdown: bool = True,
   ) -> tuple[list[Dependency], int]:
     """Add a new clause of construction, e.g. a new excenter."""
     existing_points = self.all_points()
@@ -2554,13 +2555,16 @@ class Graph:
     for c in clause.constructions:
       cdef = definitions[c.name]
 
+      # 如果在定义中的参数数量和 clause 中的参数量不一样
       if len(cdef.construction.args) != len(c.args):
+        # 如果两者相减等于 clause 中点的数量, 那么将 clause 中的点加到 c.args 的前面.
         if len(cdef.construction.args) - len(c.args) == len(clause.points):
           c.args = clause.points + c.args # add the points to the front. 
         else:
           correct_form = ' '.join(cdef.points + ['=', c.name] + cdef.args)
           raise ValueError('Argument mismatch. ' + correct_form)
 
+      # 将 construction 的参数和 clause 中的参数一一对应起来.
       mapping = dict(zip(cdef.construction.args, c.args))
       c_name = 'midp' if c.name == 'midpoint' else c.name
       # rule_name=problem.CONSTRUCTION_RULE 表示这个 construction 是基本的, 
@@ -2572,9 +2576,12 @@ class Graph:
         args = self.names2points([mapping[a] for a in d.args])
         new_points_dep_points.update(args)
         if not self.check(d.name, args):
-          raise DepCheckFailError(
-              d.name + ' ' + ' '.join([x.name for x in args])
-          )
+          if breakdown:
+            raise DepCheckFailError(
+                d.name + ' ' + ' '.join([x.name for x in args])
+            )
+          else:
+            return None, None
         deps.why += [
             Dependency(
                 d.name, args, rule_name=problem.CONSTRUCTION_RULE, level=0
