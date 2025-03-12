@@ -362,7 +362,9 @@ class Definition:
     for num in numerics:
       args.update(num.args)
 
+    # points are the arguments that are not in the numerics (new points)
     self.points = []
+    # args are the arguments that are in the numerics (old points)
     self.args = []
     for p in self.construction.args:
       if p in args:
