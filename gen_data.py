@@ -31,14 +31,19 @@ def main():
   for i in range(clause_num):
     flag = False
     while not flag:
+      # 先找到第一个 construction (确认新点)
       cdef = rd.choice(list(DEFINITIONS.values()))
-      if len(cdef.args) <= len(g.type2nodes['Point']):
-        points = rd.sample(g.type2nodes['Point'], len(cdef.args))
-        mapping = dict(zip(cdef.construction.args, points))
-        flag = True
-        for d in cdef.deps.constructions:
-          args = [mapping[arg] for arg in d.args]
-          if not g.check(d.name, args):
-            flag = False
-            break
+      if len(cdef.args) > len(g.type2nodes['Point']):
+        continue
+      points = rd.sample(g.type2nodes['Point'], len(cdef.args))
+      mapping = dict(zip(cdef.construction.args, points))
+      flag = True
+      for d in cdef.deps.constructions:
+        args = [mapping[arg] for arg in d.args]
+        if not g.check(d.name, args):
+          flag = False
+          break
+      if not flag:
+        continue
+
       
