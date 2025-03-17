@@ -29,6 +29,7 @@ def main():
   g = gh.Graph()
   clause_num = rd.randint(ClauseNumMin, ClauseNumMax)
   for i in range(clause_num):
+    # 找一个 clause
     flag = False
     while not flag:
       # 先找到第一个 construction (确认新点)
@@ -37,7 +38,7 @@ def main():
         continue
       # 从已有点中随机选一些点作为新 construction 的参数
       points = rd.sample(g.type2nodes['Point'], len(cdef.args))
-      # 建立从 args 到 points 的就映射
+      # 建立从 args 到 points 的映射
       mapping = dict(zip(cdef.construction.args, points))
       flag = True
       for d in cdef.deps.constructions:
@@ -45,7 +46,11 @@ def main():
         if not g.check(d.name, args):
           flag = False
           break
+      # 如果 deps 不满足, 则继续随机
       if not flag:
         continue
+      
+      
+      
 
       
