@@ -55,6 +55,10 @@ def main():
       constructions = [cdef.construction]
       cons_num = rd.randint(1, ClauseNumMax)
 
+      # 如果 cdef 中没有 args (即纯构造类的 construction), 则只选择一个 construction
+      if len(cdef.args) == 0:
+        cons_num = 1
+
       for i in range(cons_num - 1):
         flag = 0
         start_time = time.time()
@@ -79,7 +83,7 @@ def main():
 
           if time.time() - start_time > 1:  # 1 second timeout
             break
-            
+
         
       
 
