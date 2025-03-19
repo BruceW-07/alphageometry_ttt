@@ -6,7 +6,7 @@ from absl import flags
 from absl import app
 
 ClauseNumMin = 2
-ClauseNumMax = 7
+ClauseNumMax = 3
 ConstructNumMin = 1
 ConstructNumMax = 2
 
@@ -20,6 +20,8 @@ _RULES_FILE = flags.DEFINE_string(
 )
 
 def main(_):
+  rd.seed(1)  # Set a fixed random seed for reproducibility
+
   global DEFINITIONS
   global RULES
 
@@ -42,10 +44,10 @@ def main(_):
       # 先找到第一个 construction (确认新点)
       cdef = rd.choice(list(DEFINITIONS.values()))
       print(cdef.construction.name)
-      if len(cdef.args) > len(g.type2nodes['Point']):
+      if len(cdef.args) > len(g.type2nodes[gh.Point]):
         continue
       # 从已有点中随机选一些点作为新 construction 的参数
-      points = rd.sample(g.type2nodes['Point'], len(cdef.args))
+      points = rd.sample(g.type2nodes[gh.Point], len(cdef.args))
       # 建立从 args 到 points 的映射
       mapping = dict(zip(cdef.construction.args, points))
       flag = True
@@ -75,7 +77,7 @@ def main(_):
           cdef = rd.choice(list(DEFINITIONS.values()))
           if len(cdef.points) != len(new_points):
             continue
-          points = rd.sample(g.type2nodes['Point'], len(cdef.args))
+          points = rd.sample(g.type2nodes[gh.Point], len(cdef.args))
           mapping = dict(zip(cdef.construction.args, points))
           flag = True
           for d in cdef.deps.constructions:
